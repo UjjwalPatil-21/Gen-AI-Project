@@ -7,6 +7,7 @@ import SampleQueries from './components/SampleQueries';
 import './App.css';
 
 function App() {
+    const [apiKey, setApiKey] = useState('');
     const [filename, setFilename] = useState(null);
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -15,17 +16,23 @@ function App() {
         setFilename(newFilename);
     };
 
-    const handleQuerySubmit = async (query) => {
-        if (!filename) {
+    const handleQuerySubmit = async (query, optionalFilename) => {
+        const currentFilename = optionalFilename || filename;
+        if (!currentFilename) {
             alert('Please upload a dataset first.');
+            return;
+        }
+        if (!apiKey) {
+            alert('Please enter your OpenAI API key.');
             return;
         }
 
         setLoading(true);
         try {
             const response = await axios.post('/query/', {
-                filename,
+                filename: currentFilename,
                 query,
+                api_key: apiKey,
             });
             setResult(response.data);
         } catch (error) {
@@ -41,33 +48,6 @@ function App() {
         handleQuerySubmit(sampleQuery, sampleFilename);
     };
 
-    const originalHandleQuerySubmit = async (query, optionalFilename) => {
-        const currentFilename = optionalFilename || filename;
-        if (!currentFilename) {
-            alert('Please upload a dataset first.');
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const response = await axios.post('/query/', {
-                filename: currentFilename,
-                query,
-            });
-            setResult(response.data);
-        } catch (error) {
-            console.error('Error fetching query results:', error);
-            alert('Error fetching query results.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Keep the original handleQuerySubmit for the QueryInput component
-    const handleQuerySubmitForInput = (query) => {
-        originalHandleQuerySubmit(query, filename);
-    };
-
     return (
         <div className="App">
             <header className="App-header">
@@ -75,8 +55,18 @@ function App() {
                 <p>Your AI-Powered Data Analytics Platform</p>
             </header>
             <main>
+                <div>
+                    <h2>Enter your OpenAI API Key</h2>
+                    <input
+                        type="password"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        placeholder="sk-..."
+                        style={{ width: '400px' }}
+                    />
+                </div>
                 <FileUpload onUploadSuccess={handleUploadSuccess} />
-                <QueryInput onQuerySubmit={handleQuerySubmitForInput} />
+                <QueryInput onQuerySubmit={handleQuerySubmit} />
                 <SampleQueries onSampleSelect={handleSampleSelect} />
                 {loading ? <p>Loading...</p> : <ResultDisplay result={result} />}
             </main>

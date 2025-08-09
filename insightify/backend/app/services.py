@@ -4,9 +4,9 @@ from sqlalchemy import create_engine
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_openai import OpenAI
 
-def get_query_response(filename: str, query: str):
+def get_query_response(filename: str, query: str, api_key: str):
     """
-    Takes a filename and a natural language query, and returns the response from a LangChain SQL agent.
+    Takes a filename, a natural language query and an api_key, and returns the response from a LangChain SQL agent.
     """
     file_path = os.path.join("uploads", filename)
     if not os.path.exists(file_path):
@@ -23,7 +23,7 @@ def get_query_response(filename: str, query: str):
     df.to_sql(table_name, engine, index=False)
 
     # Create a LangChain SQL agent
-    llm = OpenAI(temperature=0)
+    llm = OpenAI(temperature=0, openai_api_key=api_key)
     agent_executor = create_sql_agent(llm, db=engine, agent_type="openai-tools", verbose=True)
 
     # Run the agent with the natural language query

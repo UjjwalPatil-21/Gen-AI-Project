@@ -53,7 +53,8 @@ def test_query(mock_get_query_response):
     # Define the request payload
     request_payload = {
         "filename": "test.csv",
-        "query": "What is the total of col2?"
+        "query": "What is the total of col2?",
+        "api_key": "test_api_key"
     }
 
     # Send the request to the endpoint
@@ -64,4 +65,4 @@ def test_query(mock_get_query_response):
     assert response.json() == mock_response
 
     # Assert that the mocked function was called with the correct arguments
-    mock_get_query_response.assert_called_once_with("test.csv", "What is the total of col2?")
+    mock_get_query_response.assert_called_once_with("test.csv", "What is the total of col2?", "test_api_key")

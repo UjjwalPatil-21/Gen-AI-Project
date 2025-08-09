@@ -24,7 +24,7 @@ async def create_upload_file(file: UploadFile = File(...)):
 
 @app.post("/query/")
 async def query(request: QueryRequest):
-    response = get_query_response(request.filename, request.query)
+    response = get_query_response(request.filename, request.query, request.api_key)
     return response
 
 @app.get("/sample-queries/")
