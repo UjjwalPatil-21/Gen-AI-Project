@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pytest
+httpx
+python-multipart
+pandas
+sqlalchemy
+langchain
+langchain-community
+langchain-openai
+openai
+tiktoken
